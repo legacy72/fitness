@@ -16,27 +16,32 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=150,
+        null=True,
     )
 
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=150,
+        null=True,
     )
 
     middle_name = models.CharField(
         verbose_name='Отчество',
         max_length=150,
         blank=True,
+        null=True,
     )
 
     email = models.EmailField(
         verbose_name='Email',
         unique=True,
         error_messages={'unique': 'Пользователь с таким email уже существует.'},
+        null=True,
     )
 
     date_of_birth = models.DateField(
         verbose_name='Дата рождения',
+        null=True,
     )
 
     GENDER_CHOICES = (
@@ -46,7 +51,8 @@ class User(AbstractUser):
     gender = models.CharField(
         verbose_name='Пол', 
         max_length=2, 
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
+        null=True,
     )
 
     class Meta:
@@ -146,6 +152,14 @@ class Service(models.Model):
         verbose_name='Медицинское учреждение',
         on_delete=models.CASCADE,
     )
+    
+    class Meta:
+        verbose_name = 'Услуга'
+        verbose_name_plural = 'Услуги'
+
+
+    def __str__(self):
+        return self.name
 
 
 class Consultation(models.Model):
@@ -199,3 +213,11 @@ class Consultation(models.Model):
         on_delete=models.CASCADE,
         related_name='expert',
     )
+
+    class Meta:
+        verbose_name = 'Консультация'
+        verbose_name_plural = 'Консультации'
+
+
+    def __str__(self):
+        return self.name
