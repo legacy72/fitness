@@ -147,10 +147,20 @@ class Service(models.Model):
         choices=STATUS_CHOICES
     )
 
+    client = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Клиент',
+        related_name='clients_service',
+        null=True,
+    )
+
     medical_center = models.ForeignKey(
         MedicalCenter,
         verbose_name='Медицинское учреждение',
         on_delete=models.CASCADE,
+        related_name='medical_center',
+        null=True,
     )
     
     class Meta:
@@ -185,7 +195,7 @@ class Consultation(models.Model):
 
     cost = models.DecimalField(
         verbose_name='Стоимость',
-        max_digits=30, 
+        max_digits=30,
         decimal_places=2,
     )
 
@@ -196,7 +206,7 @@ class Consultation(models.Model):
     )
     status = models.CharField(
         verbose_name='Статус заказа', 
-        max_length=20, 
+        max_length=20,
         choices=STATUS_CHOICES
     )
 
@@ -204,7 +214,8 @@ class Consultation(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Клиент',
-        related_name='client',
+        related_name='clients_consultation',
+        null=True,
     )
 
     expert = models.ForeignKey(
@@ -212,6 +223,7 @@ class Consultation(models.Model):
         verbose_name='Эксперт',
         on_delete=models.CASCADE,
         related_name='expert',
+        null=True,
     )
 
     class Meta:
