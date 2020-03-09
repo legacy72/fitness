@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -58,3 +59,143 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Expert(User):  
+    rate = models.FloatField(
+        verbose_name='Рейтинг',
+    )
+
+    class Meta:
+        verbose_name = 'Эксперт'
+        verbose_name_plural = 'Эксперты'
+
+
+    def __str__(self):
+        return super(User).username
+
+
+class MedicalCenter(models.Model):
+    name = models.CharField(
+        verbose_name='Наименование',
+        max_length=150,
+    )
+
+    address = models.CharField(
+        verbose_name='Адрес',
+        max_length=150,
+    )
+
+    rate = models.FloatField(
+        verbose_name='Рейтинг',
+    )
+
+    description = models.TextField(
+        verbose_name='Описание', 
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = 'Медицинский центр'
+        verbose_name_plural = 'Медицинские центры'
+        indexes = [
+            models.Index(fields=['name', ]),
+        ]
+
+
+class Service(models.Model):
+    name = models.CharField(
+        verbose_name='Наименование',
+        max_length=150,
+    )
+
+    date_create = models.DateTimeField(
+        verbose_name='Дата создания',
+        default=timezone.now,
+    )
+
+    date_provision = models.DateTimeField(
+        verbose_name='Дата предоставления',
+        default=timezone.now,
+    )
+
+    date_finish = models.DateTimeField(
+        verbose_name='Дата окончания',
+        default=timezone.now,
+    )
+
+    cost = models.DecimalField(
+        verbose_name='Стоимость',
+        max_digits=30,
+        decimal_places=2,
+    )
+
+    STATUS_CHOICES = (
+        ('process', 'В процессе'),
+        ('done', 'Выполнено'),
+        ('cancel', 'Отменено'),
+    )
+    status = models.CharField(
+        verbose_name='Статус заказа', 
+        max_length=20, 
+        choices=STATUS_CHOICES
+    )
+
+    medical_center = models.ForeignKey(
+        MedicalCenter,
+        verbose_name='Медицинское учреждение',
+        on_delete=models.CASCADE,
+    )
+
+
+class Consultation(models.Model):
+    name = models.CharField(
+        verbose_name='Наименование',
+        max_length=150,
+    )
+
+    date_create = models.DateTimeField(
+        verbose_name='Дата создания',
+        default=timezone.now,
+    )
+
+    date_provision = models.DateTimeField(
+        verbose_name='Дата предоставления',
+        default=timezone.now,
+    )
+
+    date_finish = models.DateTimeField(
+        verbose_name='Дата окончания',
+        default=timezone.now,
+    )
+
+    cost = models.DecimalField(
+        verbose_name='Стоимость',
+        max_digits=30, 
+        decimal_places=2,
+    )
+
+    STATUS_CHOICES = (
+        ('process', 'В процессе'),
+        ('done', 'Выполнено'),
+        ('cancel', 'Отменено'),
+    )
+    status = models.CharField(
+        verbose_name='Статус заказа', 
+        max_length=20, 
+        choices=STATUS_CHOICES
+    )
+
+    client = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Клиент',
+        related_name='client',
+    )
+
+    expert = models.ForeignKey(
+        Expert,
+        verbose_name='Эксперт',
+        on_delete=models.CASCADE,
+        related_name='expert',
+    )
