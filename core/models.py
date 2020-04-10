@@ -165,6 +165,13 @@ class ProbeType(models.Model):
         blank=True,
     )
 
+    class Meta:
+        verbose_name = 'Тип замера'
+        verbose_name_plural = 'Типы замеров'
+
+    def __str__(self):
+        return self.name
+
 
 class Probe(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
