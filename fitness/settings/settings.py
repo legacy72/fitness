@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'med_expert',
+    'core',
 ]
 
 REST_FRAMEWORK = {
@@ -128,7 +128,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Кастомный юзер
-AUTH_USER_MODEL = 'med_expert.User'
+AUTH_USER_MODEL = 'core.User'
 
 # JWT settings
 SIMPLE_JWT = {
