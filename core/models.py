@@ -174,7 +174,7 @@ class ProbeType(models.Model):
 
 
 class Probe(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     probe_type = models.ForeignKey(ProbeType, on_delete=models.CASCADE)
 
     value = models.CharField(

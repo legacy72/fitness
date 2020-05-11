@@ -19,10 +19,32 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProbeSerializer(serializers.ModelSerializer):
+class ProbeUserSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault(),
+    )
+
+    probe_type_name = serializers.StringRelatedField(
+        many=False,
+        source='probe_type',
+        read_only=True,
+    )
+
     class Meta:
         model = Probe
-        fields = '__all__'
+        fields = ('id', 'user', 'probe_type', 'probe_type_name', 'value', 'created_at')
+
+
+class ProbeSerializer(serializers.ModelSerializer):
+    probe_type_name = serializers.StringRelatedField(
+        many=False,
+        source='probe_type',
+        read_only=True,
+    )
+
+    class Meta:
+        model = Probe
+        fields = ('id', 'user', 'probe_type', 'probe_type_name', 'value', 'created_at')
 
 
 class ProbeTypeSerializer(serializers.ModelSerializer):

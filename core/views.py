@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status, viewsets
+from rest_framework import filters
+from url_filter.integrations.drf import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
@@ -20,6 +22,18 @@ class RoleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Role.objects.all()
+        return queryset
+
+
+class ProbeUserViewSet(viewsets.ModelViewSet):
+    serializer_class = ProbeUserSerializer
+    permission_classes = []
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filter_fields = ['id', 'user', 'probe_type', 'value', 'created_at']
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        queryset = Probe.objects.filter(user_id=user_id).all()
         return queryset
 
 
