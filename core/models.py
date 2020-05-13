@@ -1,25 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils import timezone
+from django.utils.timezone import now as now_local
 
 
 class User(AbstractUser):
-    username = models.CharField(
-        'Логин',
-        max_length=150,
-        unique=True,
-        validators=[AbstractUser.username_validator],
-        error_messages={'unique': 'Пользователь с таким логином уже существует.'},
-    )
-
     password_hash = models.CharField(
         verbose_name='Хэш пароля',
         max_length=250,
+        null=True,
+        blank=True,
     )
 
     password_salt = models.CharField(
         verbose_name='Соль пароля',
         max_length=250,
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -118,7 +114,7 @@ class Profile(models.Model):
 class Chat(models.Model):
     created_at = models.DateTimeField(
         'Время создания',
-        default=timezone.now(),
+        default=now_local,
     )
 
     description = models.TextField(
@@ -184,7 +180,7 @@ class Probe(models.Model):
 
     created_at = models.DateTimeField(
         'Время создания',
-        default=timezone.now(),
+        default=now_local,
     )
 
     class Meta:
@@ -197,7 +193,7 @@ class Message(models.Model):
 
     created_at = models.DateTimeField(
         'Время создания',
-        default=timezone.now(),
+        default=now_local,
     )
 
     text = models.TextField(

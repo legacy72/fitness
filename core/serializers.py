@@ -6,11 +6,12 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
-        # fields = (
-        #     'username',
-        #     'profile',
-        # )
+        fields = ('username', 'email', 'password')
+
+    def create(self, validated_data):
+        user = User(username=validated_data['username'])
+        user.set_password(validated_data['password'])
+        return User.objects.create_user(**validated_data)
 
 
 class RoleSerializer(serializers.ModelSerializer):
