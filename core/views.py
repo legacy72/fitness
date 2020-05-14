@@ -80,3 +80,29 @@ class ProbeTypeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = ProbeType.objects.all()
         return queryset
+
+
+class ChatViewSet(viewsets.ModelViewSet):
+    """
+    params: user_id - отфильтровать чаты по тем, в которых участвовал данный юзер
+    """
+    serializer_class = ChatSerializer
+    permission_classes = []
+
+    def get_queryset(self):
+        user_id = self.request.GET.get('user_id')
+        if user_id:
+            chats = Chat.objects.filter(members__in=[user_id])
+        else:
+            chats = Chat.objects.all()
+        return chats
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+    permission_classes = []
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filter_fields = ['id', 'chat', 'author', 'is_read']
+
+    def get_queryset(self):
+        return Message.objects.all()

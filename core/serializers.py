@@ -52,3 +52,17 @@ class ProbeTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProbeType
         fields = '__all__'
+
+
+class ChatSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'members', 'created_at', 'description')
+
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ('id', 'text', 'chat', 'author', 'created_at', 'is_read')

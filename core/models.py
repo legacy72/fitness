@@ -112,6 +112,8 @@ class Profile(models.Model):
 
 
 class Chat(models.Model):
+    members = models.ManyToManyField(User, verbose_name='Участник')
+
     created_at = models.DateTimeField(
         'Время создания',
         default=now_local,
@@ -189,12 +191,8 @@ class Probe(models.Model):
 
 
 class Message(models.Model):
-    member_ship = models.ForeignKey(MemberShip, on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(
-        'Время создания',
-        default=now_local,
-    )
+    chat = models.ForeignKey(Chat, verbose_name='Чат', on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE, null=True)
 
     text = models.TextField(
         verbose_name='Текст',
@@ -202,6 +200,17 @@ class Message(models.Model):
         blank=True,
     )
 
+    created_at = models.DateTimeField(
+        'Время создания',
+        default=now_local,
+    )
+
+    is_read = models.BooleanField(verbose_name='Прочитано', default=False)
+
     class Meta:
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
+        ordering = ['created_at']
+
+    def __str__(self):
+        return self.text
