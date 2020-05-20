@@ -12,8 +12,12 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
     def get_queryset(self):
-        queryset = User.objects.all()
-        return queryset
+        user = self.request.user
+        if user.is_anonymous:
+            return User.objects.all()
+        return User.objects.filter(
+                pk=user.pk,
+            ).all()
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -90,12 +94,10 @@ class ChatViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
     def get_queryset(self):
-        user_id = self.request.GET.get('user_id')
-        if user_id:
-            chats = Chat.objects.filter(members__in=[user_id])
-        else:
-            chats = Chat.objects.all()
-        return chats
+        user = self.request.user
+        if user.is_anonymous:
+            return Chat.objects.all()
+        return Chat.objects.filter(members__in=[user])
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -115,11 +117,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filter_fields = ['id', 'user', 'role', 'first_name', 'last_name', 'date_of_birth', 'gender', 'status']
 
     def get_queryset(self):
-        user_id = self.request.GET.get('user_id')
-        if user_id:
-            queryset = Profile.objects.filter(
-                user_id=user_id,
+        user = self.request.user
+        if user.is_anonymous:
+            return Profile.objects.all()
+        return Profile.objects.filter(
+                user=user,
             ).all()
-        else:
-            queryset = Profile.objects.all()
-        return queryset
