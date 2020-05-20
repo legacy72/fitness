@@ -106,3 +106,20 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Message.objects.all()
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfileSerializer
+    permission_classes = []
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filter_fields = ['id', 'user', 'role', 'first_name', 'last_name', 'date_of_birth', 'gender', 'status']
+
+    def get_queryset(self):
+        user_id = self.request.GET.get('user_id')
+        if user_id:
+            queryset = Profile.objects.filter(
+                user_id=user_id,
+            ).all()
+        else:
+            queryset = Profile.objects.all()
+        return queryset

@@ -6,7 +6,7 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password')
 
     def create(self, validated_data):
         user = User(username=validated_data['username'])
@@ -66,3 +66,11 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ('id', 'text', 'chat', 'author', 'created_at', 'is_read')
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'user', 'role', 'img', 'first_name', 'last_name', 'date_of_birth', 'gender', 'description',
+                  'status')
