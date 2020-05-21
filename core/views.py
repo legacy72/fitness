@@ -19,16 +19,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 pk=user.pk,
             ).all()
 
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        headers = self.get_success_headers(serializer.data)
-
-        return Response(
-            {'username': user.username}, status=status.HTTP_201_CREATED, headers=headers
-        )
-
 
 class RoleViewSet(viewsets.ModelViewSet):
     serializer_class = RoleSerializer
