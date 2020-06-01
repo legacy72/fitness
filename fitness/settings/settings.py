@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'rest_registration',
     'core',
 ]
 
@@ -42,6 +43,11 @@ REST_FRAMEWORK = {
     )
 }
 
+REST_REGISTRATION = {
+    'REGISTER_VERIFICATION_ENABLED': False,
+    'RESET_PASSWORD_VERIFICATION_ENABLED': False,
+    'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
