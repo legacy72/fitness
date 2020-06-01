@@ -56,9 +56,8 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
-    img = models.CharField(
+    img = models.TextField(
         verbose_name='Картинка',
-        max_length=250,
         null=True,
         blank=True,
     )
