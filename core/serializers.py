@@ -65,7 +65,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ('id', 'text', 'chat', 'author', 'created_at', 'is_read')
+        fields = ('id', 'text', 'chat', 'author', 'created_at', 'is_read', 'membership')
 
 
 class ProfileSerializer(serializers.ModelSerializer):

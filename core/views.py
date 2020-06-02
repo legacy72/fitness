@@ -94,7 +94,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    filter_fields = ['id', 'chat', 'author', 'is_read']
+    filter_fields = ['id', 'chat', 'author', 'is_read', 'membership']
 
     def get_queryset(self):
         return Message.objects.all()
