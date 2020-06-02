@@ -1,8 +1,8 @@
 from rest_framework import filters
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+from rest_framework import viewsets
 from url_filter.integrations.drf import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+
 from .models import *
 from .serializers import *
 
