@@ -2,14 +2,14 @@ from rest_framework import filters
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from url_filter.integrations.drf import DjangoFilterBackend
-
+from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializers import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -22,7 +22,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class RoleViewSet(viewsets.ModelViewSet):
     serializer_class = RoleSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Role.objects.all()
@@ -34,7 +34,7 @@ class ProbeUserViewSet(viewsets.ModelViewSet):
     params: start_date - отфильтровать по пробам, которые были сделаны после данной даты
     """
     serializer_class = ProbeUserSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filter_fields = ['id', 'user', 'probe_type', 'value', 'created_at']
 
@@ -53,7 +53,7 @@ class ProbeViewSet(viewsets.ModelViewSet):
     params: start_date - отфильтровать по пробам, которые были сделаны после данной даты
     """
     serializer_class = ProbeSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filter_fields = ['id', 'user', 'probe_type', 'value', 'created_at']
 
@@ -67,7 +67,7 @@ class ProbeViewSet(viewsets.ModelViewSet):
 
 class ProbeTypeViewSet(viewsets.ModelViewSet):
     serializer_class = ProbeTypeSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filter_fields = ['id', 'name', 'input_method']
 
@@ -81,7 +81,7 @@ class ChatViewSet(viewsets.ModelViewSet):
     params: user_id - отфильтровать чаты по тем, в которых участвовал данный юзер
     """
     serializer_class = ChatSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -92,7 +92,7 @@ class ChatViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filter_fields = ['id', 'chat', 'author', 'is_read']
 
@@ -102,7 +102,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filter_fields = ['id', 'user', 'role', 'first_name', 'last_name', 'date_of_birth', 'gender', 'status']
 

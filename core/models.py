@@ -132,7 +132,6 @@ class Chat(models.Model):
 class MemberShip(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    # TODO: permissions должны быть таблицей, а костян питух
     permissions = models.CharField(
         verbose_name='Разрешения',
         max_length=150,
@@ -151,7 +150,6 @@ class ProbeType(models.Model):
         max_length=150,
     )
 
-    # TODO: input_method должен быть чойсами, а костян питух
     input_method = models.IntegerField(
         verbose_name='Метод ввода'
     )
