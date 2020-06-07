@@ -160,7 +160,7 @@ class ResendCodeView(viewsets.ViewSet):
     """
     Вьюшка для повторной отправки кода на почту пользователя
 
-    :param request: username - логин пользователя (равен почте)
+    :param request: username - логин пользователя
     :return:
     """
     def create(self, request):
