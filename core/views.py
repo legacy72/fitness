@@ -1,15 +1,17 @@
 from rest_framework import filters
 from rest_framework import viewsets
-from url_filter.integrations.drf import DjangoFilterBackend
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from url_filter.integrations.drf import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
+from .utils.mail import generate_auth_code, send_code
 
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get_queryset(self):
         user = self.request.user
@@ -18,6 +20,17 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.filter(
                 pk=user.pk,
             ).all()
+
+    def perform_create(self, serializer):
+        # создание пользователя (неактивным)
+        user = serializer.save(is_active=False)
+        # генерация кода
+        code = generate_auth_code()
+        # отправка кода подтверждения
+        send_code(mail=serializer.data['email'], code=code)
+        # добавлени кода в базу
+        auth_code = AuthCode(user=user, code=code)
+        auth_code.save()
 
 
 class RoleViewSet(viewsets.ModelViewSet):
@@ -113,3 +126,56 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(
                 user=user,
             ).all()
+
+
+class ActivateUserView(viewsets.ViewSet):
+    """
+    Вьюшка для активации пользователя
+
+    :param request: code - код активации из сообщения на почте
+    :param request: username - логин пользователя
+    :return:
+    """
+    def create(self, request):
+        data = request.data
+        try:
+            user = User.objects.get(username=data.get('username'))
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь с данным логином не найден'})
+        auth_code = AuthCode.objects.filter(
+            user=user,
+            code=data.get('code'),
+            end_date__gte=timezone.now(),
+        ).all()
+        if not auth_code:
+            return Response({
+                'error': 'Код истек или введен неверно'
+            })
+        user.is_active = True
+        user.save()
+        return Response({'message': 'Пользователь успешно активирован'})
+
+
+class ResendCodeView(viewsets.ViewSet):
+    """
+    Вьюшка для повторной отправки кода на почту пользователя
+
+    :param request: username - логин пользователя (равен почте)
+    :return:
+    """
+    def create(self, request):
+        data = request.data
+        try:
+            user = User.objects.get(username=data.get('username'))
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь с данным логином не найден'})
+
+        auth_code, created = AuthCode.objects.get_or_create(user=user)
+        # генерация кода
+        code = generate_auth_code()
+        # отправка кода подтверждения
+        send_code(mail=data.get('username'), code=code)
+        auth_code.code = code
+        auth_code.save()
+
+        return Response({'message': 'Код успешно отправлен'})

@@ -1,6 +1,9 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now as now_local
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -212,3 +215,17 @@ class Message(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class AuthCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(verbose_name='Код', max_length=255)
+    start_date = models.DateTimeField(verbose_name='Дата генерации', auto_now=True)
+    end_date = models.DateTimeField(
+        verbose_name='Дата окончания действия',
+        default=timezone.now() + timedelta(minutes=10)
+    )
+
+    class Meta:
+        verbose_name = 'Код'
+        verbose_name_plural = 'Коды'
