@@ -193,6 +193,7 @@ class Probe(models.Model):
 class Message(models.Model):
     chat = models.ForeignKey(Chat, verbose_name='Чат', on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE, null=True)
+    membership = models.ForeignKey(MemberShip, on_delete=models.CASCADE, related_name='messages', null=True)
 
     text = models.TextField(
         verbose_name='Текст',
