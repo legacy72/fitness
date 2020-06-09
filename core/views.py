@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -148,7 +149,7 @@ class ActivateUserView(viewsets.ViewSet):
         try:
             user = User.objects.get(username=data.get('username'))
         except User.DoesNotExist:
-            return Response({'error': 'Пользователь с данным логином не найден'})
+            return Response({'error': 'Пользователь с данным логином не найден'}, status=status.HTTP_400_BAD_REQUEST)
         auth_code = AuthCode.objects.filter(
             user=user,
             code=data.get('code'),
@@ -157,7 +158,7 @@ class ActivateUserView(viewsets.ViewSet):
         if not auth_code:
             return Response({
                 'error': 'Код истек или введен неверно'
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
         user.save()
         return Response({'message': 'Пользователь успешно активирован'})
