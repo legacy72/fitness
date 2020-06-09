@@ -112,6 +112,13 @@ class MessageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Message.objects.all()
 
+    def perform_create(self, serializer):
+        data = serializer.validated_data
+        members = data['chat'].members.all()
+        if self.request.user not in members:
+            raise Exception('Вы не состоите в данном чате')
+        serializer.save()
+
 
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
