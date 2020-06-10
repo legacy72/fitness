@@ -223,7 +223,7 @@ class AuthCode(models.Model):
     start_date = models.DateTimeField(verbose_name='Дата генерации', auto_now=True)
     end_date = models.DateTimeField(
         verbose_name='Дата окончания действия',
-        default=timezone.now() + timedelta(hours=6)
+        default=timezone.now() + timedelta(minutes=10)
     )
 
     class Meta:

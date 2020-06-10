@@ -182,7 +182,7 @@ class ResendCodeView(viewsets.ViewSet):
         # генерация кода
         code = generate_auth_code()
         # отправка кода подтверждения
-        send_code(mail=data.get('username'), code=code)
+        send_code(mail=user.email, code=code)
         auth_code.code = code
         auth_code.save()
 
