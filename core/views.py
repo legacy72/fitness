@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import status
 from rest_framework import filters
 from rest_framework import viewsets
@@ -184,7 +185,7 @@ class ResendCodeView(viewsets.ViewSet):
         # отправка кода подтверждения
         send_code(mail=user.email, code=code)
         auth_code.code = code
-        auth_code.end_date = timezone.now() + timedelta(minutes=10)
+        auth_code.end_date = timezone.now() + timezone.timedelta(minutes=10)
         auth_code.save()
 
         return Response({'message': 'Код успешно отправлен'})
