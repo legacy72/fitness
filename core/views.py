@@ -1,3 +1,6 @@
+import random
+from datetime import datetime
+
 from django.utils import timezone
 from rest_framework import status
 from rest_framework import filters
@@ -189,3 +192,104 @@ class ResendCodeView(viewsets.ViewSet):
         auth_code.save()
 
         return Response({'message': 'Код успешно отправлен'})
+
+
+class StatisticGenerator(viewsets.ViewSet):
+    def create(self, request):
+        code = request.data['code']
+        if code != '228':
+            return Response('Неверный пароль')
+        users_count = 200
+
+        role_expert = Role.objects.get(name='Expert')
+        role_client = Role.objects.get(name='Client')
+
+        probe_type_weight = ProbeType.objects.get(name='Weight')
+        probe_type_height = ProbeType.objects.get(name='Height')
+        probe_type_cal_eaten = ProbeType.objects.get(name='Calories eaten')
+        probe_type_cal_burn = ProbeType.objects.get(name='Calories burn')
+        probe_type_waist = ProbeType.objects.get(name='Waist')
+        probe_type_walking_time = ProbeType.objects.get(name='Walking time')
+        probe_type_exercies_time = ProbeType.objects.get(name='Exercies time')
+
+        for i in range(users_count):
+            try:
+                user = User(
+                    username='generated_user_{}'.format(i),
+                    email='generated_email_{}'.format(i),
+                    password='generated_pass_{}'.format(i),
+                    is_active=True,
+                )
+                user.save()
+                year = random.randint(1940, 2007)
+                profile = Profile(
+                    user=user,
+                    role=role_expert if i % 4 else role_client,
+                    first_name='generated_first_name_{}'.format(i),
+                    last_name='generated_last_name_{}'.format(i),
+                    date_of_birth=datetime(year=year, month=i % 11+1, day=i % 27+1),
+                    gender='M' if i % 2 else 'F',
+                )
+                profile.save()
+
+                weight_val = random.randint(40, 150)
+                height_val = random.randint(130, 220)
+                cal_eaten_val = random.randint(500, 4000)
+                cal_burn_val = random.randint(300, 2500)
+                waist_val = random.randint(45, 150)
+                walking_time_val = random.randint(0, 600)
+                exercies_time_val = random.randint(0, 600)
+
+                for j in range(1, 10):
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_weight,
+                        value=weight_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_height,
+                        value=height_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_cal_eaten,
+                        value=cal_eaten_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_cal_burn,
+                        value=cal_burn_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_waist,
+                        value=waist_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_walking_time,
+                        value=walking_time_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+                    probe = Probe(
+                        user=user,
+                        probe_type=probe_type_exercies_time,
+                        value=exercies_time_val,
+                        created_at=datetime(year=2020, month=6, day=j)
+                    )
+                    probe.save()
+            except Exception:
+                pass
+        return Response('Готово')
