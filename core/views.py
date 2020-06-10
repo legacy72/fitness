@@ -133,11 +133,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_anonymous:
-            return Profile.objects.all()
         return Profile.objects.filter(
                 user=user,
             ).all()
+
+
+class AllProfilesViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filter_fields = ['id', 'user', 'role', 'first_name', 'last_name', 'date_of_birth', 'gender', 'status']
+
+    def get_queryset(self):
+        return Profile.objects.all()
 
 
 class ActivateUserView(viewsets.ViewSet):
@@ -199,7 +207,75 @@ class StatisticGenerator(viewsets.ViewSet):
         code = request.data['code']
         if code != '228':
             return Response('Неверный пароль')
-        users_count = 200
+
+        names = {
+            "last_name": [
+                "Castaneda",
+                "Mccoy",
+                "Gibson",
+                "Wade",
+                "Thornton",
+                "Wyatt",
+                "Mendez",
+                "Rhodes",
+                "Nielsen",
+                "Fitzgerald",
+                "Hess",
+                "Alvarado",
+                "Gates",
+                "Preston",
+                "Bright",
+                "Francis",
+                "Hutchinson",
+                "Dougherty",
+                "Vincent",
+                "Orozco",
+                "Villa",
+                "Kent",
+                "Snyder",
+                "Downs",
+                "Savage",
+                "Serrano",
+                "Arnold",
+                "Glenn",
+                "Hamilton",
+                "Larson"
+            ],
+            "first_name": [
+                "Alina",
+                "Madilynn",
+                "Kendal",
+                "Olivia",
+                "Shyann",
+                "Bella",
+                "Lea",
+                "Daniella",
+                "Cecilia",
+                "Aubrey",
+                "Anabelle",
+                "Gwendolyn",
+                "Desiree",
+                "Milagros",
+                "Presley",
+                "Cade",
+                "Brett",
+                "Terrence",
+                "Enrique",
+                "Glenn",
+                "Marcus",
+                "Colten",
+                "Vincent",
+                "Cale",
+                "Mateo",
+                "Demetrius",
+                "Nathanial",
+                "Aydan",
+                "Isiah",
+                "Tucker"
+            ]
+        }
+
+        users_count = 40
 
         role_expert = Role.objects.get(name='Expert')
         role_client = Role.objects.get(name='Client')
@@ -214,7 +290,7 @@ class StatisticGenerator(viewsets.ViewSet):
 
         for i in range(users_count):
             try:
-                user = User(
+                user = User.objects.create_user(
                     username='generated_user_{}'.format(i),
                     email='generated_email_{}'.format(i),
                     password='generated_pass_{}'.format(i),
@@ -222,11 +298,19 @@ class StatisticGenerator(viewsets.ViewSet):
                 )
                 user.save()
                 year = random.randint(1940, 2007)
+
+                if i % 2:
+                    first_name = names['first_name'][random.randint(15, 29)]
+                    last_name = names['last_name'][random.randint(15, 29)]
+                else:
+                    first_name = names['first_name'][random.randint(0, 15)]
+                    last_name = names['last_name'][random.randint(0, 15)]
+
                 profile = Profile(
                     user=user,
-                    role=role_expert if i % 4 else role_client,
-                    first_name='generated_first_name_{}'.format(i),
-                    last_name='generated_last_name_{}'.format(i),
+                    role=role_expert if i % 4 == 0 else role_client,
+                    first_name=first_name,
+                    last_name=last_name,
                     date_of_birth=datetime(year=year, month=i % 11+1, day=i % 27+1),
                     gender='M' if i % 2 else 'F',
                 )
@@ -291,5 +375,5 @@ class StatisticGenerator(viewsets.ViewSet):
                     )
                     probe.save()
             except Exception:
-                pass
+                print('Не удалось вставить')
         return Response('Готово')
