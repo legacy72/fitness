@@ -316,15 +316,15 @@ class StatisticGenerator(viewsets.ViewSet):
                 )
                 profile.save()
 
-                weight_val = random.randint(40, 150)
-                height_val = random.randint(130, 220)
-                cal_eaten_val = random.randint(500, 4000)
-                cal_burn_val = random.randint(300, 2500)
-                waist_val = random.randint(45, 150)
-                walking_time_val = random.randint(0, 600)
-                exercies_time_val = random.randint(0, 600)
-
                 for j in range(1, 10):
+                    weight_val = random.randint(40, 150)
+                    height_val = random.randint(130, 220)
+                    cal_eaten_val = random.randint(500, 4000)
+                    cal_burn_val = random.randint(300, 2500)
+                    waist_val = random.randint(45, 150)
+                    walking_time_val = random.randint(0, 600)
+                    exercies_time_val = random.randint(0, 600)
+
                     probe = Probe(
                         user=user,
                         probe_type=probe_type_weight,
